@@ -259,17 +259,6 @@ class JsepSession {
   virtual const std::vector<std::pair<size_t, std::string>>&
   GetLastSdpParsingErrors() const = 0;
 
-  static const char* GetStateStr(JsepSignalingState state) {
-    static const char* states[] = {"stable",
-                                   "have-local-offer",
-                                   "have-remote-offer",
-                                   "have-local-pranswer",
-                                   "have-remote-pranswer",
-                                   "closed"};
-
-    return states[state];
-  }
-
   virtual bool CheckNegotiationNeeded() const = 0;
 
   void CountTransceivers(

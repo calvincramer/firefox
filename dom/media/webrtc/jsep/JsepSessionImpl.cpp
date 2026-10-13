@@ -399,7 +399,7 @@ JsepSession::Result JsepSessionImpl::CreateOffer(
   mLastError.clear();
 
   if (mState != kJsepStateStable && mState != kJsepStateHaveLocalOffer) {
-    JSEP_SET_ERROR("Cannot create offer in state " << GetStateStr(mState));
+    JSEP_SET_ERROR("Cannot create offer in state " << mState);
     // Spec doesn't seem to say this is an error. It probably should.
     return dom::PCError::InvalidStateError;
   }
@@ -586,7 +586,7 @@ JsepSession::Result JsepSessionImpl::CreateAnswer(
 
   if (mState != kJsepStateHaveRemoteOffer &&
       mState != kJsepStateHaveLocalPranswer) {
-    JSEP_SET_ERROR("Cannot create answer in state " << GetStateStr(mState));
+    JSEP_SET_ERROR("Cannot create answer in state " << mState);
     return dom::PCError::InvalidStateError;
   }
 
@@ -1075,8 +1075,7 @@ JsepSession::Result JsepSessionImpl::SetRemoteDescription(
 
   if (type == kJsepSdpRollback) {
     if (mState != kJsepStateHaveRemoteOffer) {
-      JSEP_SET_ERROR("Cannot rollback remote description in "
-                     << GetStateStr(mState));
+      JSEP_SET_ERROR("Cannot rollback remote description in " << mState);
       return dom::PCError::InvalidStateError;
     }
 
@@ -1090,22 +1089,20 @@ JsepSession::Result JsepSessionImpl::SetRemoteDescription(
   switch (mState) {
     case kJsepStateStable:
       if (type != kJsepSdpOffer) {
-        JSEP_SET_ERROR("Cannot set remote answer in state "
-                       << GetStateStr(mState));
+        JSEP_SET_ERROR("Cannot set remote answer in state " << mState);
         return dom::PCError::InvalidStateError;
       }
       break;
     case kJsepStateHaveLocalOffer:
     case kJsepStateHaveRemotePranswer:
       if (type != kJsepSdpAnswer && type != kJsepSdpPranswer) {
-        JSEP_SET_ERROR("Cannot set remote offer in state "
-                       << GetStateStr(mState));
+        JSEP_SET_ERROR("Cannot set remote offer in state " << mState);
         return dom::PCError::InvalidStateError;
       }
       break;
     default:
       JSEP_SET_ERROR("Cannot set remote offer or answer in current state "
-                     << GetStateStr(mState));
+                     << mState);
       return dom::PCError::InvalidStateError;
   }
 
@@ -2585,8 +2582,7 @@ void JsepSessionImpl::SetDefaultCodecs(
 void JsepSessionImpl::SetState(JsepSignalingState state) {
   if (state == mState) return;
 
-  MOZ_MTLOG(ML_NOTICE, "[" << mName << "]: " << GetStateStr(mState) << " -> "
-                           << GetStateStr(state));
+  MOZ_MTLOG(ML_NOTICE, "[" << mName << "]: " << mState << " -> " << state);
   mState = state;
 }
 
@@ -2707,7 +2703,7 @@ nsresult JsepSessionImpl::UpdateDefaultCandidate(
       GetParsedLocalDescription(kJsepDescriptionPendingOrCurrent);
 
   if (!sdp) {
-    JSEP_SET_ERROR("Cannot add ICE candidate in state " << GetStateStr(mState));
+    JSEP_SET_ERROR("Cannot add ICE candidate in state " << mState);
     return NS_ERROR_UNEXPECTED;
   }
 

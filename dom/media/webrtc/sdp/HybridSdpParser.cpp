@@ -28,14 +28,14 @@ HybridSdpParser::HybridSdpParser()
   MOZ_ASSERT(!(mSecondary && mFailover),
              "Can not have both a secondary and failover parser!");
   MOZ_LOG_FMT(SdpLog, LogLevel::Info, "Primary SDP Parser: {}",
-              mPrimary->Name().c_str());
+              mPrimary->Name());
   mSecondary.apply([](auto& parser) {
     MOZ_LOG_FMT(SdpLog, LogLevel::Info, "Secondary SDP Logger: {}",
-                parser->Name().c_str());
+                parser->Name());
   });
   mFailover.apply([](auto& parser) {
     MOZ_LOG_FMT(SdpLog, LogLevel::Info, "Failover SDP Logger: {}",
-                parser->Name().c_str());
+                parser->Name());
   });
 }
 
