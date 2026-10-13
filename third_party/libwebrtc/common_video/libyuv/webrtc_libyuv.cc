@@ -31,6 +31,43 @@
 
 namespace webrtc {
 
+const char* format_as(VideoType type) {
+  switch (type) {
+    case VideoType::kI420:
+      return "I420";
+    case VideoType::kIYUV:
+    case VideoType::kYV12:
+      return "YV12";
+    case VideoType::kRGB24:
+      return "24BG";
+    case VideoType::kABGR:
+      return "ABGR";
+    case VideoType::kARGB:
+      return "ARGB";
+    case VideoType::kARGB4444:
+      return "R444";
+    case VideoType::kRGB565:
+      return "RGBP";
+    case VideoType::kARGB1555:
+      return "RGBO";
+    case VideoType::kYUY2:
+      return "YUY2";
+    case VideoType::kUYVY:
+      return "UYVY";
+    case VideoType::kMJPEG:
+      return "MJPG";
+    case VideoType::kNV21:
+      return "NV21";
+    case VideoType::kNV12:
+      return "NV12";
+    case VideoType::kBGRA:
+      return "BGRA";
+    case VideoType::kUnknown:
+    default:
+      return "unknown";
+  }
+}
+
 size_t CalcBufferSize(VideoType type, int width, int height) {
   RTC_DCHECK_GE(width, 0);
   RTC_DCHECK_GE(height, 0);
@@ -66,11 +103,9 @@ size_t CalcBufferSize(VideoType type, int width, int height) {
 }
 
 int ExtractBuffer(const scoped_refptr<I420BufferInterface>& input_frame,
-                  size_t size,
-                  uint8_t* buffer) {
+                  size_t size, uint8_t* buffer) {
   RTC_DCHECK(buffer);
-  if (!input_frame)
-    return -1;
+  if (!input_frame) return -1;
   int width = input_frame->width();
   int height = input_frame->height();
   size_t length = CalcBufferSize(VideoType::kI420, width, height);
@@ -136,10 +171,8 @@ int ConvertVideoType(VideoType video_type) {
   return libyuv::FOURCC_ANY;
 }
 
-int ConvertFromI420(const VideoFrame& src_frame,
-                    VideoType dst_video_type,
-                    int dst_sample_size,
-                    uint8_t* dst_frame) {
+int ConvertFromI420(const VideoFrame& src_frame, VideoType dst_video_type,
+                    int dst_sample_size, uint8_t* dst_frame) {
   scoped_refptr<I420BufferInterface> i420_buffer =
       src_frame.video_frame_buffer()->ToI420();
   return libyuv::ConvertFromI420(
@@ -149,21 +182,11 @@ int ConvertFromI420(const VideoFrame& src_frame,
       ConvertVideoType(dst_video_type));
 }
 
-int ConvertToI420(const uint8_t* sample,
-                  size_t sample_size,
-                  uint8_t* dst_y,
-                  int dst_stride_y,
-                  uint8_t* dst_u,
-                  int dst_stride_u,
-                  uint8_t* dst_v,
-                  int dst_stride_v,
-                  int src_width,
-                  int src_height,
-                  int src_stride,
-                  int dst_width,
-                  int dst_height,
-                  uint32_t rotation,
-                  uint32_t fourcc) {
+int ConvertToI420(const uint8_t* sample, size_t sample_size, uint8_t* dst_y,
+                  int dst_stride_y, uint8_t* dst_u, int dst_stride_u,
+                  uint8_t* dst_v, int dst_stride_v, int src_width,
+                  int src_height, int src_stride, int dst_width, int dst_height,
+                  uint32_t rotation, uint32_t fourcc) {
   if (src_height == INT_MIN || dst_height == INT_MIN) {
     return -1;
   }
@@ -237,8 +260,7 @@ int ConvertToI420(const uint8_t* sample,
         // > To avoid ambiguities drivers must return a bytesperline value
         // > rounded up to a multiple of the scale factor.
         // https://www.kernel.org/doc/html/v7.1/userspace-api/media/v4l/pixfmt-v4l2.html
-        if ((src_stride % 2) != 0)
-          return -1;
+        if ((src_stride % 2) != 0) return -1;
         break;
       default:
         break;
@@ -467,9 +489,7 @@ int ConvertToI420(const uint8_t* sample,
 }
 
 scoped_refptr<I420ABufferInterface> ScaleI420ABuffer(
-    const I420ABufferInterface& buffer,
-    int target_width,
-    int target_height) {
+    const I420ABufferInterface& buffer, int target_width, int target_height) {
   scoped_refptr<I420Buffer> yuv_buffer =
       I420Buffer::Create(target_width, target_height);
   yuv_buffer->ScaleFrom(buffer);
@@ -490,9 +510,7 @@ scoped_refptr<I420ABufferInterface> ScaleI420ABuffer(
 }
 
 scoped_refptr<I420BufferInterface> ScaleVideoFrameBuffer(
-    const I420BufferInterface& source,
-    int dst_width,
-    int dst_height) {
+    const I420BufferInterface& source, int dst_width, int dst_height) {
   scoped_refptr<I420Buffer> scaled_buffer =
       I420Buffer::Create(dst_width, dst_height);
   scaled_buffer->ScaleFrom(source);
@@ -557,8 +575,7 @@ double I420APSNR(const I420ABufferInterface& ref_buffer,
 
 // Compute PSNR for an I420A frame (all planes)
 double I420APSNR(const VideoFrame* ref_frame, const VideoFrame* test_frame) {
-  if (!ref_frame || !test_frame)
-    return -1;
+  if (!ref_frame || !test_frame) return -1;
   RTC_DCHECK(ref_frame->video_frame_buffer()->type() ==
              VideoFrameBuffer::Type::kI420A);
   RTC_DCHECK(test_frame->video_frame_buffer()->type() ==
@@ -592,8 +609,7 @@ double I420PSNR(const I420BufferInterface& ref_buffer,
 
 // Compute PSNR for an I420 frame (all planes)
 double I420PSNR(const VideoFrame* ref_frame, const VideoFrame* test_frame) {
-  if (!ref_frame || !test_frame)
-    return -1;
+  if (!ref_frame || !test_frame) return -1;
   return I420PSNR(*ref_frame->video_frame_buffer()->ToI420(),
                   *test_frame->video_frame_buffer()->ToI420());
 }
@@ -662,8 +678,7 @@ double I420ASSIM(const I420ABufferInterface& ref_buffer,
 
 // Compute SSIM for an I420A frame (all planes)
 double I420ASSIM(const VideoFrame* ref_frame, const VideoFrame* test_frame) {
-  if (!ref_frame || !test_frame)
-    return -1;
+  if (!ref_frame || !test_frame) return -1;
   RTC_DCHECK(ref_frame->video_frame_buffer()->type() ==
              VideoFrameBuffer::Type::kI420A);
   RTC_DCHECK(test_frame->video_frame_buffer()->type() ==
@@ -693,24 +708,15 @@ double I420SSIM(const I420BufferInterface& ref_buffer,
 }
 
 double I420SSIM(const VideoFrame* ref_frame, const VideoFrame* test_frame) {
-  if (!ref_frame || !test_frame)
-    return -1;
+  if (!ref_frame || !test_frame) return -1;
   return I420SSIM(*ref_frame->video_frame_buffer()->ToI420(),
                   *test_frame->video_frame_buffer()->ToI420());
 }
 
-void NV12Scale(uint8_t* tmp_buffer,
-               const uint8_t* src_y,
-               int src_stride_y,
-               const uint8_t* src_uv,
-               int src_stride_uv,
-               int src_width,
-               int src_height,
-               uint8_t* dst_y,
-               int dst_stride_y,
-               uint8_t* dst_uv,
-               int dst_stride_uv,
-               int dst_width,
+void NV12Scale(uint8_t* tmp_buffer, const uint8_t* src_y, int src_stride_y,
+               const uint8_t* src_uv, int src_stride_uv, int src_width,
+               int src_height, uint8_t* dst_y, int dst_stride_y,
+               uint8_t* dst_uv, int dst_stride_uv, int dst_width,
                int dst_height) {
   const int src_chroma_width = (src_width + 1) / 2;
   const int src_chroma_height = (src_height + 1) / 2;
@@ -752,20 +758,13 @@ void NV12Scale(uint8_t* tmp_buffer,
 NV12ToI420Scaler::NV12ToI420Scaler() = default;
 NV12ToI420Scaler::~NV12ToI420Scaler() = default;
 
-void NV12ToI420Scaler::NV12ToI420Scale(const uint8_t* src_y,
-                                       int src_stride_y,
-                                       const uint8_t* src_uv,
-                                       int src_stride_uv,
-                                       int src_width,
-                                       int src_height,
-                                       uint8_t* dst_y,
-                                       int dst_stride_y,
-                                       uint8_t* dst_u,
-                                       int dst_stride_u,
-                                       uint8_t* dst_v,
-                                       int dst_stride_v,
-                                       int dst_width,
-                                       int dst_height) {
+void NV12ToI420Scaler::NV12ToI420Scale(const uint8_t* src_y, int src_stride_y,
+                                       const uint8_t* src_uv, int src_stride_uv,
+                                       int src_width, int src_height,
+                                       uint8_t* dst_y, int dst_stride_y,
+                                       uint8_t* dst_u, int dst_stride_u,
+                                       uint8_t* dst_v, int dst_stride_v,
+                                       int dst_width, int dst_height) {
   if (src_width == dst_width && src_height == dst_height) {
     // No scaling.
     tmp_uv_planes_.clear();

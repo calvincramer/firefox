@@ -39,6 +39,9 @@ enum class VideoResizeModeEnum : uint8_t;
 // constraints algorithm.
 enum DistanceCalculation { kFitness, kFeasibility };
 
+// For use in {fmt}
+const char* format_as(mozilla::DistanceCalculation dc);
+
 /**
  * The WebRTC implementation of the MediaEngine interface.
  */

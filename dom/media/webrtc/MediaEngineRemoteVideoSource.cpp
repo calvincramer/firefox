@@ -238,6 +238,8 @@ static inline const char* ToString(DistanceCalculation aMode) {
   MOZ_CRASH("Unexpected distance calculation");
 }
 
+const char* format_as(mozilla::DistanceCalculation dc) { return ToString(dc); }
+
 nsresult MediaEngineRemoteVideoSource::Allocate(
     const MediaTrackConstraints& aConstraints, const MediaEnginePrefs& aPrefs,
     uint64_t aWindowID, const char** aOutBadConstraint) {
@@ -253,8 +255,7 @@ nsresult MediaEngineRemoteVideoSource::Allocate(
   const auto distanceMode =
       resizeMode.map(&ToDistanceCalculation).valueOr(legacyDistanceMode);
   webrtc::CaptureCapability newCapability;
-  LOG("ChooseCapability({}) for mCapability (Allocate) ++",
-      ToString(distanceMode));
+  LOG("ChooseCapability({}) for mCapability (Allocate) ++", distanceMode);
   if (!ChooseCapability(c, aPrefs, newCapability, distanceMode,
                         aOutBadConstraint)) {
     if (aOutBadConstraint && !*aOutBadConstraint) {
@@ -263,8 +264,7 @@ nsresult MediaEngineRemoteVideoSource::Allocate(
     }
     return NS_ERROR_FAILURE;
   }
-  LOG("ChooseCapability({}) for mCapability (Allocate) --",
-      ToString(distanceMode));
+  LOG("ChooseCapability({}) for mCapability (Allocate) --", distanceMode);
 
   mCaptureId =
       camera::GetChildAndCall(&camera::CamerasChild::AllocateCapture,
@@ -511,7 +511,7 @@ nsresult MediaEngineRemoteVideoSource::Reconfigure(
       resizeMode.map(&ToDistanceCalculation).valueOr(legacyDistanceMode);
   webrtc::CaptureCapability newCapability;
   LOG("ChooseCapability({}) for mTargetCapability (Reconfigure) ++",
-      ToString(distanceMode));
+      distanceMode);
   if (!ChooseCapability(c, aPrefs, newCapability, distanceMode,
                         aOutBadConstraint)) {
     if (aOutBadConstraint && !*aOutBadConstraint) {
@@ -521,7 +521,7 @@ nsresult MediaEngineRemoteVideoSource::Reconfigure(
     return NS_ERROR_INVALID_ARG;
   }
   LOG("ChooseCapability({}) for mTargetCapability (Reconfigure) --",
-      ToString(distanceMode));
+      distanceMode);
 
   bool needsRestart{};
   DesiredSizeInput input{};
@@ -891,49 +891,12 @@ uint32_t MediaEngineRemoteVideoSource::GetBestFitnessDistance(
   return candidateSet[0].mDistance;
 }
 
-static const char* ConvertVideoTypeToCStr(webrtc::VideoType aType) {
-  switch (aType) {
-    case webrtc::VideoType::kI420:
-      return "I420";
-    case webrtc::VideoType::kIYUV:
-    case webrtc::VideoType::kYV12:
-      return "YV12";
-    case webrtc::VideoType::kRGB24:
-      return "24BG";
-    case webrtc::VideoType::kABGR:
-      return "ABGR";
-    case webrtc::VideoType::kARGB:
-      return "ARGB";
-    case webrtc::VideoType::kARGB4444:
-      return "R444";
-    case webrtc::VideoType::kRGB565:
-      return "RGBP";
-    case webrtc::VideoType::kARGB1555:
-      return "RGBO";
-    case webrtc::VideoType::kYUY2:
-      return "YUY2";
-    case webrtc::VideoType::kUYVY:
-      return "UYVY";
-    case webrtc::VideoType::kMJPEG:
-      return "MJPG";
-    case webrtc::VideoType::kNV21:
-      return "NV21";
-    case webrtc::VideoType::kNV12:
-      return "NV12";
-    case webrtc::VideoType::kBGRA:
-      return "BGRA";
-    case webrtc::VideoType::kUnknown:
-    default:
-      return "unknown";
-  }
-}
-
 static void LogCapability(const char* aHeader,
                           const webrtc::CaptureCapability& aCapability,
                           uint32_t aDistance) {
   LOG("{}: {:4} x {:4} x {:2} maxFps, {}. Distance = {}", aHeader,
       aCapability.width, aCapability.height, aCapability.maxFPS,
-      ConvertVideoTypeToCStr(aCapability.videoType), aDistance);
+      aCapability.videoType, aDistance);
 }
 
 bool MediaEngineRemoteVideoSource::ChooseCapability(

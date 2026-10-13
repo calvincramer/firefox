@@ -47,6 +47,9 @@ enum class VideoType {
   kNV12,
 };
 
+// For use in {fmt}
+const char* format_as(VideoType type);
+
 // This is the max PSNR value our algorithms can return.
 const double kPerfectPSNR = 48.0f;
 
@@ -68,8 +71,7 @@ size_t CalcBufferSize(VideoType type, int width, int height);
 //   - buffer      : Pointer to buffer
 // Return value: length of buffer if OK, < 0 otherwise.
 int ExtractBuffer(const scoped_refptr<I420BufferInterface>& input_frame,
-                  size_t size,
-                  uint8_t* buffer);
+                  size_t size, uint8_t* buffer);
 int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
 // Convert From I420
 // Input:
@@ -79,31 +81,17 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
 //   - dst_frame        : Pointer to a destination frame.
 // Return value: 0 if OK, < 0 otherwise.
 // It is assumed that source and destination have equal height.
-int ConvertFromI420(const VideoFrame& src_frame,
-                    VideoType dst_video_type,
-                    int dst_sample_size,
-                    uint8_t* dst_frame);
+int ConvertFromI420(const VideoFrame& src_frame, VideoType dst_video_type,
+                    int dst_sample_size, uint8_t* dst_frame);
 
-int ConvertToI420(const uint8_t* sample,
-                  size_t sample_size,
-                  uint8_t* dst_y,
-                  int dst_stride_y,
-                  uint8_t* dst_u,
-                  int dst_stride_u,
-                  uint8_t* dst_v,
-                  int dst_stride_v,
-                  int src_width,
-                  int src_height,
-                  int src_stride,
-                  int dst_width,
-                  int dst_height,
-                  uint32_t rotation,
-                  uint32_t fourcc);
+int ConvertToI420(const uint8_t* sample, size_t sample_size, uint8_t* dst_y,
+                  int dst_stride_y, uint8_t* dst_u, int dst_stride_u,
+                  uint8_t* dst_v, int dst_stride_v, int src_width,
+                  int src_height, int src_stride, int dst_width, int dst_height,
+                  uint32_t rotation, uint32_t fourcc);
 
 scoped_refptr<I420BufferInterface> ScaleVideoFrameBuffer(
-    const I420BufferInterface& source,
-    int dst_width,
-    int dst_height);
+    const I420BufferInterface& source, int dst_width, int dst_height);
 
 double I420SSE(const I420BufferInterface& ref_buffer,
                const I420BufferInterface& test_buffer);
@@ -137,18 +125,10 @@ double I420SSIM(const I420BufferInterface& ref_buffer,
 // then `tmp_buffer` is not used. In other cases, the minimum size of
 // `tmp_buffer` should be:
 //   (src_width/2) * (src_height/2) * 2 + (dst_width/2) * (dst_height/2) * 2
-void NV12Scale(uint8_t* tmp_buffer,
-               const uint8_t* src_y,
-               int src_stride_y,
-               const uint8_t* src_uv,
-               int src_stride_uv,
-               int src_width,
-               int src_height,
-               uint8_t* dst_y,
-               int dst_stride_y,
-               uint8_t* dst_uv,
-               int dst_stride_uv,
-               int dst_width,
+void NV12Scale(uint8_t* tmp_buffer, const uint8_t* src_y, int src_stride_y,
+               const uint8_t* src_uv, int src_stride_uv, int src_width,
+               int src_height, uint8_t* dst_y, int dst_stride_y,
+               uint8_t* dst_uv, int dst_stride_uv, int dst_width,
                int dst_height);
 
 // Helper class for directly converting and scaling NV12 to I420. The Y-plane
@@ -158,20 +138,11 @@ class RTC_EXPORT NV12ToI420Scaler {
  public:
   NV12ToI420Scaler();
   ~NV12ToI420Scaler();
-  void NV12ToI420Scale(const uint8_t* src_y,
-                       int src_stride_y,
-                       const uint8_t* src_uv,
-                       int src_stride_uv,
-                       int src_width,
-                       int src_height,
-                       uint8_t* dst_y,
-                       int dst_stride_y,
-                       uint8_t* dst_u,
-                       int dst_stride_u,
-                       uint8_t* dst_v,
-                       int dst_stride_v,
-                       int dst_width,
-                       int dst_height);
+  void NV12ToI420Scale(const uint8_t* src_y, int src_stride_y,
+                       const uint8_t* src_uv, int src_stride_uv, int src_width,
+                       int src_height, uint8_t* dst_y, int dst_stride_y,
+                       uint8_t* dst_u, int dst_stride_u, uint8_t* dst_v,
+                       int dst_stride_v, int dst_width, int dst_height);
 
  private:
   std::vector<uint8_t> tmp_uv_planes_;
