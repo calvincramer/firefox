@@ -475,9 +475,7 @@ AudioCallbackDriver::AudioCallbackDriver(
     LOG(LogLevel::Debug,
         ("{}: AudioCallbackDriver {} ctor - using VOICE and requesting input "
          "processing params {} (Gen {}).",
-         fmt::ptr(Graph()), fmt::ptr(this),
-         CubebUtils::ProcessingParamsToString(mInputProcessingRequest.mParams)
-             .get(),
+         fmt::ptr(Graph()), fmt::ptr(this), mInputProcessingRequest.mParams,
          mInputProcessingRequest.mGeneration));
     mInputDevicePreference = CUBEB_DEVICE_PREF_VOICE;
     CubebUtils::SetInCommunication(true);
@@ -1413,9 +1411,7 @@ void AudioCallbackDriver::RequestInputProcessingParams(
   MOZ_ASSERT(aRequest.mParams != mInputProcessingRequest.mParams);
   LOG(LogLevel::Info,
       ("AudioCallbackDriver {}, Input processing params {} (Gen {}) requested.",
-       fmt::ptr(this),
-       CubebUtils::ProcessingParamsToString(aRequest.mParams).get(),
-       aRequest.mGeneration));
+       fmt::ptr(this), aRequest.mParams, aRequest.mGeneration));
   mInputProcessingRequest = aRequest;
   MOZ_ALWAYS_SUCCEEDS(mCubebOperationThread->Dispatch(
       NS_NewRunnableFunction(__func__, [this, self = RefPtr(this), aRequest] {
@@ -1463,14 +1459,12 @@ void AudioCallbackDriver::SetInputProcessingParams(
     LOG(LogLevel::Debug,
         ("AudioCallbackDriver {}, requested processing params {} (gen {}) "
          "reduced to {} by supported params {}",
-         fmt::ptr(this), CubebUtils::ProcessingParamsToString(requested).get(),
-         generation, CubebUtils::ProcessingParamsToString(params).get(),
-         CubebUtils::ProcessingParamsToString(supported).get()));
+         fmt::ptr(this), requested, generation, params, supported));
     if (params == mConfiguredInputProcessingParams) {
       LOG(LogLevel::Debug,
           ("AudioCallbackDriver {}, no change in processing params {}. Not "
            "attempting reconfiguration.",
-           fmt::ptr(this), CubebUtils::ProcessingParamsToString(params).get()));
+           fmt::ptr(this), params));
       return Some(params);
     }
     mConfiguredInputProcessingParams = params;
@@ -1478,14 +1472,13 @@ void AudioCallbackDriver::SetInputProcessingParams(
     if (r == CUBEB_OK) {
       LOG(LogLevel::Info,
           ("AudioCallbackDriver {}, input processing params set to {}",
-           fmt::ptr(this), CubebUtils::ProcessingParamsToString(params).get()));
+           fmt::ptr(this), params));
       return Some(params);
     }
     LOG(LogLevel::Info,
         ("AudioCallbackDriver {}, failed setting input processing params to "
          "{}. r={}",
-         fmt::ptr(this), CubebUtils::ProcessingParamsToString(params).get(),
-         r));
+         fmt::ptr(this), params, r));
     return Some(Err(r));
   })();
   if (!result) {
@@ -1497,10 +1490,7 @@ void AudioCallbackDriver::SetInputProcessingParams(
         LOG(LogLevel::Debug,
             ("AudioCallbackDriver {}, Notifying of input processing params {} "
              "(Gen {}). r={}",
-             fmt::ptr(this),
-             CubebUtils::ProcessingParamsToString(
-                 result.unwrapOr(CUBEB_INPUT_PROCESSING_PARAM_NONE))
-                 .get(),
+             fmt::ptr(this), result.unwrapOr(CUBEB_INPUT_PROCESSING_PARAM_NONE),
              generation, result.isErr() ? result.inspectErr() : CUBEB_OK));
         mGraphInterface->NotifySetRequestedInputProcessingParamsResult(
             this, generation, std::move(result));

@@ -487,8 +487,7 @@ void MediaTrackGraphImpl::CheckDriver() {
           audioCallbackDriver->RequestedInputProcessingParams().mGeneration) {
     LOG(LogLevel::Debug,
         ("{}: Setting on the fly requested processing params {} (Gen {})",
-         fmt::ptr(this),
-         CubebUtils::ProcessingParamsToString(processingRequest->mParams).get(),
+         fmt::ptr(this), processingRequest->mParams,
          processingRequest->mGeneration));
     audioCallbackDriver->RequestInputProcessingParams(*processingRequest);
   }

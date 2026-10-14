@@ -150,8 +150,7 @@ auto AudioInputSource::SetRequestedProcessingParams(
   // operations to the task thread.
   MOZ_ASSERT(mTaskThread);
 
-  LOG("AudioInputSource {}, SetProcessingParams({})", fmt::ptr(this),
-      CubebUtils::ProcessingParamsToString(aParams).get());
+  LOG("AudioInputSource {}, SetProcessingParams({})", fmt::ptr(this), aParams);
   using ProcessingPromise = SetRequestedProcessingParamsPromise;
   MozPromiseHolder<ProcessingPromise> holder;
   RefPtr<ProcessingPromise> p = holder.Ensure(__func__);

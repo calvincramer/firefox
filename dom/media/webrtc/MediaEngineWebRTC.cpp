@@ -175,7 +175,7 @@ void MediaEngineWebRTC::EnumerateMicrophoneDevices(
 #endif
     LOG("Cubeb device: type 0x{:x}, state 0x{:x}, name {}, id {}",
         deviceInfo->Type(), deviceInfo->State(),
-        NS_ConvertUTF16toUTF8(deviceInfo->Name()).get(),
+        NS_ConvertUTF16toUTF8(deviceInfo->Name()),
         fmt::ptr(deviceInfo->DeviceID()));
 
     if (deviceInfo->State() == CUBEB_DEVICE_STATE_ENABLED) {
@@ -219,7 +219,7 @@ void MediaEngineWebRTC::EnumerateSpeakerDevices(
   for (const auto& deviceInfo : *devices) {
     LOG("Cubeb device: type 0x{:x}, state 0x{:x}, name {}, id {}",
         deviceInfo->Type(), deviceInfo->State(),
-        NS_ConvertUTF16toUTF8(deviceInfo->Name()).get(),
+        NS_ConvertUTF16toUTF8(deviceInfo->Name()),
         fmt::ptr(deviceInfo->DeviceID()));
     if (deviceInfo->State() == CUBEB_DEVICE_STATE_ENABLED) {
       MOZ_ASSERT(deviceInfo->Type() == CUBEB_DEVICE_TYPE_OUTPUT);

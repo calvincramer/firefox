@@ -337,9 +337,7 @@ DeviceInputTrack::UpdateRequestedProcessingParams() {
         "{}NativeInputTrack notifying of setting requested processing params "
         "{} (Gen {})",
         (AsNonNativeInputTrack() ? "Non" : ""),
-        CubebUtils::ProcessingParamsToString(mProcessingParamsRequest.mParams)
-            .get(),
-        mProcessingParamsRequest.mGeneration);
+        mProcessingParamsRequest.mParams, mProcessingParamsRequest.mGeneration);
 
     NotifySetRequestedProcessingParams(Graph(),
                                        mProcessingParamsRequest.mGeneration,

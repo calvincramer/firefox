@@ -365,7 +365,7 @@ nsresult MediaEngineWebRTCMicrophoneSource::Deallocate() {
 
   mState = kReleased;
   LOG("Mic source {} Audio device {} deallocated", fmt::ptr(this),
-      NS_ConvertUTF16toUTF8(mDeviceInfo->Name()).get());
+      NS_ConvertUTF16toUTF8(mDeviceInfo->Name()));
   return NS_OK;
 }
 
@@ -499,14 +499,11 @@ void AudioInputProcessing::NotifySetRequestedInputProcessingParams(
       mPlatformProcessingSetParams & aRequestedParams;
   LOG("AudioInputProcessing {} platform processing params being applied are "
       "now {} (Gen {}). Assuming {} while waiting for the result.",
-      fmt::ptr(this),
-      CubebUtils::ProcessingParamsToString(aRequestedParams).get(), aGeneration,
-      CubebUtils::ProcessingParamsToString(intersection).get());
+      fmt::ptr(this), aRequestedParams, aGeneration, intersection);
   if (mPlatformProcessingSetParams == intersection) {
     LOG("AudioInputProcessing {} intersection {} of platform processing params "
         "already applied. Doing nothing.",
-        fmt::ptr(this),
-        CubebUtils::ProcessingParamsToString(intersection).get());
+        fmt::ptr(this), intersection);
     return;
   }
   mPlatformProcessingSetParams = intersection;
@@ -529,9 +526,7 @@ void AudioInputProcessing::NotifySetRequestedInputProcessingParamsResult(
     mPlatformProcessingSetError = Nothing();
     mPlatformProcessingSetParams = aResult.inspect();
     LOG("AudioInputProcessing {} platform processing params are now {}.",
-        fmt::ptr(this),
-        CubebUtils::ProcessingParamsToString(mPlatformProcessingSetParams)
-            .get());
+        fmt::ptr(this), mPlatformProcessingSetParams);
   } else {
     mPlatformProcessingSetError = Some(aResult.inspectErr());
     mPlatformProcessingSetParams = CUBEB_INPUT_PROCESSING_PARAM_NONE;
