@@ -75,6 +75,10 @@
 #  define MOZ_CUBEB_REMOTING
 #endif
 
+nsCString format_as(cubeb_input_processing_params aParams) {
+  return mozilla::CubebUtils::ProcessingParamsToString(aParams);
+}
+
 namespace mozilla {
 
 namespace {
