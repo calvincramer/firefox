@@ -508,7 +508,7 @@ const char* MediaConstraintsHelper::FindBadConstraint(
 static void LogConstraintStringRange(
     const NormalizedConstraintSet::StringRange& aRange) {
   if (aRange.mExact.size() <= 1 && aRange.mIdeal.size() <= 1) {
-    LOG("  {}: {{ exact: [{}], ideal: [{}] }}", aRange.mName.get(),
+    LOG("  {}: {{ exact: [{}], ideal: [{}] }}", aRange.mName,
         (aRange.mExact.empty()
              ? ""
              : NS_ConvertUTF16toUTF8(*aRange.mExact.begin()).get()),
@@ -516,13 +516,13 @@ static void LogConstraintStringRange(
              ? ""
              : NS_ConvertUTF16toUTF8(*aRange.mIdeal.begin()).get()));
   } else {
-    LOG("  {}: {{ exact: [", aRange.mName.get());
+    LOG("  {}: {{ exact: [", aRange.mName);
     for (const auto& entry : aRange.mExact) {
-      LOG("      {},", NS_ConvertUTF16toUTF8(entry).get());
+      LOG("      {},", NS_ConvertUTF16toUTF8(entry));
     }
     LOG("    ], ideal: [");
     for (const auto& entry : aRange.mIdeal) {
-      LOG("      {},", NS_ConvertUTF16toUTF8(entry).get());
+      LOG("      {},", NS_ConvertUTF16toUTF8(entry));
     }
     LOG("    ]}}");
   }
@@ -532,23 +532,10 @@ template <typename T>
 static void LogConstraintRange(
     const NormalizedConstraintSet::ConstraintRange<T>& aRange) {
   if (aRange.mIdeal.isSome()) {
-    LOG("  {}: {{ min: {}, max: {}, ideal: {} }}", aRange.mName.get(),
-        aRange.mMin, aRange.mMax, aRange.mIdeal.valueOr(0));
+    LOG("  {}: {{ min: {}, max: {}, ideal: {} }}", aRange.mName, aRange.mMin,
+        aRange.mMax, aRange.mIdeal.valueOr(0));
   } else {
-    LOG("  {}: {{ min: {}, max: {} }}", aRange.mName.get(), aRange.mMin,
-        aRange.mMax);
-  }
-}
-
-template <>
-void LogConstraintRange(
-    const NormalizedConstraintSet::ConstraintRange<double>& aRange) {
-  if (aRange.mIdeal.isSome()) {
-    LOG("  {}: {{ min: {}, max: {}, ideal: {} }}", aRange.mName.get(),
-        aRange.mMin, aRange.mMax, aRange.mIdeal.valueOr(0));
-  } else {
-    LOG("  {}: {{ min: {}, max: {} }}", aRange.mName.get(), aRange.mMin,
-        aRange.mMax);
+    LOG("  {}: {{ min: {}, max: {} }}", aRange.mName, aRange.mMin, aRange.mMax);
   }
 }
 
