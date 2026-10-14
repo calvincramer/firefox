@@ -206,7 +206,7 @@ static bool ToNicerStunStruct(const char* aAddrForFqdn,
   }
 
   if (aEntry.mUri.mHost.Length() >= sizeof(aResult->addr.fqdn)) {
-    MOZ_MTLOG(ML_ERROR, "FQDN too long: " << aEntry.mUri.mHost.get());
+    MOZ_MTLOG(ML_ERROR, "FQDN too long: " << aEntry.mUri.mHost);
     return false;
   }
 

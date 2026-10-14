@@ -3,14 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef GMPProcessParent_h
-#define GMPProcessParent_h 1
+#  define GMPProcessParent_h 1
 
-#include "base/basictypes.h"
-#include "base/file_path.h"
-#include "base/thread.h"
-#include "mozilla/ipc/GeckoChildProcessHost.h"
-#include "mozilla/media/MediaUtils.h"
-#include "nsIFile.h"
+#  include "base/basictypes.h"
+#  include "base/file_path.h"
+#  include "base/thread.h"
+#  include "mozilla/ipc/GeckoChildProcessHost.h"
+#  include "mozilla/media/MediaUtils.h"
+#  include "nsIFile.h"
 
 class nsIRunnable;
 
@@ -30,7 +30,7 @@ class GMPProcessParent final : public mozilla::ipc::GeckoChildProcessHost {
   const std::string& GetPluginFilePath() { return mGMPPath; }
   bool UseXPCOM() const { return mUseXpcom; }
 
-#if defined(XP_MACOSX) && defined(MOZ_SANDBOX)
+#  if defined(XP_MACOSX) && defined(MOZ_SANDBOX)
   // Init static members on the main thread
   static void InitStaticMainThread();
 
@@ -50,7 +50,7 @@ class GMPProcessParent final : public mozilla::ipc::GeckoChildProcessHost {
 
   // Return the sandbox type to be used with this process type.
   static MacSandboxType GetMacSandboxType() { return MacSandboxType_GMP; };
-#endif
+#  endif
 
   using mozilla::ipc::GeckoChildProcessHost::GetChildProcessHandle;
 
@@ -65,7 +65,7 @@ class GMPProcessParent final : public mozilla::ipc::GeckoChildProcessHost {
   // Whether or not XPCOM is enabled in the GMP process.
   bool mUseXpcom;
 
-#if defined(XP_MACOSX) && defined(MOZ_SANDBOX)
+#  if defined(XP_MACOSX) && defined(MOZ_SANDBOX)
   // Indicates whether we'll start the Mac GMP sandbox during
   // process launch (earlyinit) which is the new preferred method
   // or later in the process lifetime.
@@ -81,11 +81,11 @@ class GMPProcessParent final : public mozilla::ipc::GeckoChildProcessHost {
   // window service access.
   bool mRequiresWindowServer;
 
-#  if defined(DEBUG)
+#    if defined(DEBUG)
   // Used to assert InitStaticMainThread() is called before the constructor.
   static bool sIsMainThreadInitDone;
+#    endif
 #  endif
-#endif
 
   // Ticket for blocking shutdown while the process is live.
   UniquePtr<media::ShutdownBlockingTicket> mShutdownBlocker;
