@@ -25,7 +25,7 @@ void MediaPipelineFilter::SetRemoteMediaStreamId(
     const Maybe<std::string>& aMid) {
   if (aMid != mRemoteMid) {
     DEBUG_LOG(("MediaPipelineFilter 0x{} added new remote RTP MID: '{}'.",
-               fmt::ptr(this), aMid.valueOr("").c_str()));
+               fmt::ptr(this), aMid.valueOr("")));
     mRemoteMid = aMid;
     mRemoteMidBindings.clear();
   }
@@ -52,7 +52,7 @@ bool MediaPipelineFilter::Filter(const webrtc::RTPHeader& header) {
   // Bind an SSRC if a matching MID is found
   if (mid && mRemoteMid == mid) {
     DEBUG_LOG(("MediaPipelineFilter 0x{} learned SSRC: {} for MID: '{}'",
-               fmt::ptr(this), header.ssrc, mRemoteMid.value().c_str()));
+               fmt::ptr(this), header.ssrc, mRemoteMid.value()));
     mRemoteMidBindings.insert(header.ssrc);
   }
   // Check for matching MID
@@ -62,16 +62,16 @@ bool MediaPipelineFilter::Filter(const webrtc::RTPHeader& header) {
       DEBUG_LOG(
           ("MediaPipelineFilter 0x{} SSRC: {} matched for MID: '{}'."
            " passing packet",
-           fmt::ptr(this), header.ssrc, mRemoteMid.value().c_str()));
+           fmt::ptr(this), header.ssrc, mRemoteMid.value()));
       return true;
     }
     DEBUG_LOG(
         ("MediaPipelineFilter 0x{} SSRC: {} did not match bound SSRC(s) for"
          " MID: '{}'. ignoring packet",
-         fmt::ptr(this), header.ssrc, mRemoteMid.value().c_str()));
+         fmt::ptr(this), header.ssrc, mRemoteMid.value()));
     for (const uint32_t ssrc : mRemoteMidBindings) {
       DEBUG_LOG(("MediaPipelineFilter 0x{} MID {} is associated with SSRC: {}",
-                 fmt::ptr(this), mRemoteMid.value().c_str(), ssrc));
+                 fmt::ptr(this), mRemoteMid.value(), ssrc));
     }
     return false;
   }
@@ -154,12 +154,12 @@ void MediaPipelineFilter::Update(const MediaPipelineFilter& filter_update,
     mRemoteMidBindings = filter_update.mRemoteMidBindings;
     auto remoteMid = mRemoteMid.valueOrFrom([] { return std::string(); });
     DEBUG_LOG(("MediaPipelineFilter 0x{} Now bound to remote MID {}",
-               fmt::ptr(this), remoteMid.c_str()));
+               fmt::ptr(this), remoteMid));
     for (const auto& ssrc : mRemoteMidBindings) {
       DEBUG_LOG((
           "MediaPipelineFilter 0x{} Now bound to remote SSRC {} for remote MID "
           "{}",
-          fmt::ptr(this), ssrc, remoteMid.c_str()));
+          fmt::ptr(this), ssrc, remoteMid));
     }
   }
 
