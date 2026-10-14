@@ -1055,8 +1055,7 @@ nsresult MediaPipelineTransmit::SetTrack(
     aDomTrack->GetId(nsTrackId);
     MOZ_LOG_FMT(gMediaPipelineLog, LogLevel::Debug,
                 "Reattaching pipeline to track {} track {} conduit type: {}",
-                fmt::ptr(aDomTrack.get()),
-                NS_ConvertUTF16toUTF8(nsTrackId).get(),
+                fmt::ptr(aDomTrack.get()), NS_ConvertUTF16toUTF8(nsTrackId),
                 mIsVideo ? "video" : "audio");
   }
 
